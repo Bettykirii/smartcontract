@@ -25,7 +25,7 @@ module.exports = {
   solidity: "0.8.4",
   networks: {
     hardhat: {},
-    mainnet: {
+    rinkbey: {
       url: process.env.JSON_RPC,
       chainId: 4,
       accounts: [
