@@ -4,7 +4,10 @@
   "description": "A smart contract using uniswap",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.js --network rinkeby",
+    "compile": "npx hardhat compile",
+    "clean": "npx hardhat clean"
   },
   "author": "",
   "license": "ISC",

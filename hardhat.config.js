@@ -24,8 +24,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.4",
   networks: {
-    hardhat: {},
-    rinkbey: {
+    hardhat: {
+      forking: {
+        url: `https://eth-mainnet.alchemyapi.io/v2/GHpI-yFGZUL6DnvLva9CXanGPkXRPwD-`
+      }
+    },
+    rinkeby: {
       url: process.env.JSON_RPC,
       chainId: 4,
       accounts: [

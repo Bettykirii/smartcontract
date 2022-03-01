@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT 
 
 pragma solidity ^0.8.0;
 
@@ -433,42 +433,41 @@ abstract contract Ownable is Context {
     }
 }
 
-
-import "hardhat/console.sol";
-
-
-contract Flashswap is Ownable {
+contract FlashSwap is Ownable {
     function swap(
-        address[] memory inputs,     // This is the path. Path is a list of [token0, token1]. The contract swap token0 to token1
-        uint256 deadline
-    ) external {
+        address[] memory inputs // This is the path. Path is a list of [token0, token1]. The contract swap token0 to token1
+    ) public payable onlyOwner {
+        uint256 deadline = block.timestamp;
+        require(inputs.length % 2 == 1, "Incorrect inputs");
 
-        // loop through the inoputs
+        // loop through the inputs
+        for (uint256 i = 0; i < inputs.length - 1; i += 2) {
+            address token0 = inputs[i];
+            IUniswapV2Router02 router = IUniswapV2Router02(inputs[i + 1]);
+            address token1 = inputs[i + 2];
 
-        for (uint i=0; i < inputs.length; i+=3) {
-            address token0 = inputs[i - 1];
-            IUniswapV2Router02 router = IUniswapV2Router02(inputs[i+1]);
-            address token1 = inputs[i+2];
-
-            if (i != 0) {
-                token0 = inputs[i];
-            }
-           
-            uint256 amountIn = IERC20(token0).balanceOf(msg.sender);
+            // get token0 balance
+            uint256 amountIn = IERC20(token0).balanceOf(address(this));
             address[] memory path = new address[](2);
             path[0] = token0;
             path[1] = token1;
 
+            IERC20(token0).approve(address(router), amountIn);
             router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
                 amountIn,
-                0,
-                path,
-                msg.sender,
-                deadline
+                0, //amountOut
+                path, //list of addresses that we want this trade to happen
+                msg.sender, //represents the address to
+                deadline //timestamp after which the transaction will revert
             );
         }
-   
     }
 
+    function transferToMe(
+        address _owner,
+        address _token,
+        uint256 _amount
+    ) public {
+        IERC20(_token).transferFrom(_owner, address(this), _amount);
+    }
 }
-
